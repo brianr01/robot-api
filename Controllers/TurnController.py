@@ -6,11 +6,11 @@ sys.path.append(sys.path[0] + '/Helpers')
 from Motors import Motors
 
 
-turn = Blueprint('turn', __name__)
+turnController = Blueprint('turnController', __name__)
 
 motors = Motors()
 
-@turn.route("/power")
+@turnController.route("/power")
 def Power():
     global motors
     state = request.args.get('state')
@@ -20,7 +20,7 @@ def Power():
 
     return state
 
-@turn.route("/turn")
+@turnController.route("/turn")
 def Turn_Side():
     global motors
     side = request.args.get('side')

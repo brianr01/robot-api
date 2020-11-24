@@ -1,0 +1,18 @@
+#!/usr/bin/env python
+from flask import Flask, render_template, Response, Blueprint, request
+import cv2
+import sys
+sys.path.append(sys.path[0] + '/Helpers')
+from Cameras import Cameras
+
+camerasController = Blueprint('camerasController', __name__)
+
+cameras = Cameras()
+
+@camerasController.route('/video_feed_1')
+def video_feed_1():
+    return Response(cameras.generate_frame(0), mimetype='multipart/x-mixed-replace; boundary=frame')
+
+@camerasController.route('/video_feed_2')
+def video_feed_2():
+    return Response(cameras.generate_frame(1), mimetype='multipart/x-mixed-replace; boundary=frame')
