@@ -12,6 +12,9 @@ class Cameras:
             cap = self.testDevice(i)
             if (cap):
                 self.cameras.append(cap)
+            
+            if len(self.cameras) == 2:
+                break
 
     def testDevice(self, source):
         cap = cv2.VideoCapture(source) 
@@ -31,3 +34,6 @@ class Cameras:
                 frame = buffer.tobytes()
                 yield (b'--frame\r\n'
                     b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')  # concat frame one by one and show result
+    
+    def switch_cameras(self):
+        self.cameras = self.cameras[::-1]
