@@ -16,3 +16,7 @@ def video_feed_1():
 @camerasController.route('/video_feed_2')
 def video_feed_2():
     return Response(cameras.generate_frame(1), mimetype='multipart/x-mixed-replace; boundary=frame')
+
+@camerasController.route('/switch_video_feeds')
+def switch_video_feeds():
+    return Response(cameras.switch_cameras(), mimetype='multipart/x-mixed-replace; boundary=frame')
