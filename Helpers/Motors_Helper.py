@@ -20,7 +20,7 @@ class Motors_Helper:
         self.actionString = ''
 
     def Append_Power_To_Action_String(self, state):
-        character = 'a' if state == 'True' else 'b'
+        character = 'a' if state == 'on' else 'b'
         self.actionString += character
     
     def Append_Direction_To_Action_String(self, direction):

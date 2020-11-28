@@ -24,9 +24,9 @@ def Turn_Side():
     side = request.args.get('side')
     direction = request.args.get('direction')
 
-    cube.Power('True')        # Power on
+    cube.Power('on')        # Power on
     cube.Turn(side, direction)
-    cube.Power('False')       # Power off
+    cube.Power('off')       # Power off
 
     cube.Execute()
 
@@ -36,14 +36,14 @@ def Turn_Side():
 def Scramble():
     global cube
 
-    cube.Power('True')
+    cube.Power('on')
     for i in range(0,30):
         side = random.choice('rludfb')
         direction = random.choice(['c', 'ccw'])
 
         cube.Turn(side, direction)
 
-    cube.Power('False')
+    cube.Power('off')
 
     cube.Execute()
 

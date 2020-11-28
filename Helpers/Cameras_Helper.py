@@ -1,6 +1,4 @@
-import cv2
-import os
-import sys
+import cv2, os, sys
 
 class Cameras_Helper:
     def __init__(self):

@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 from flask import Flask, render_template, Response, Blueprint, request
-import cv2
-import sys
+import cv2, sys
 sys.path.append(sys.path[0] + '/Helpers')
 from Cameras_Helper import Cameras_Helper
 
