@@ -1,6 +1,6 @@
 import serial
 
-class MotorsHelper:
+class Motors_Helper:
     side_letter_to_character_dictionary = {
         'r':'e',
         'l':'f',

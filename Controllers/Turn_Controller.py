@@ -2,13 +2,13 @@ from flask import Blueprint
 from flask import request
 import serial, sys, random
 sys.path.append(sys.path[0] + '/Helpers')
-from CubeHelper import CubeHelper
+from Cube_Helper import Cube_Helper
 
-cube = CubeHelper()
+cube = Cube_Helper()
 
-turnController = Blueprint('turnController', __name__)
+turn_controller = Blueprint('turn_controller', __name__)
 
-@turnController.route("/power")
+@turn_controller.route("/power")
 def Power():
     global cube
     state = request.args.get('state')
@@ -18,7 +18,7 @@ def Power():
 
     return state
 
-@turnController.route("/turn")
+@turn_controller.route("/turn")
 def Turn_Side():
     global cube
     side = request.args.get('side')
@@ -32,7 +32,7 @@ def Turn_Side():
 
     return 'done'
 
-@turnController.route("/scramble")
+@turn_controller.route("/scramble")
 def Scramble():
     global cube
 
@@ -49,11 +49,11 @@ def Scramble():
 
     return 'done'
 
-@turnController.route("/solve")
+@turn_controller.route("/solve")
 def Solve():
     global cube
 
-    solution = cube.virtual_cube.get_solution()
+    solution = cube.virtual_cube.Get_Solution()
 
     solution = solution.split()
 

@@ -26,7 +26,7 @@ import random
 '''
 
 
-class VirtualRubiksCubeHelper:
+class Virtual_Rubiks_Cube_Helper:
     side_order = 'urfdlb'
 
     edges_of_moving_face = {'u':['b3', 'b2', 'b1',
@@ -67,9 +67,9 @@ class VirtualRubiksCubeHelper:
                          'b':['b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b']}
 
     def __init__(self):
-        self.reset()
+        self.Reset()
 
-    def reset(self):
+    def Reset(self):
         self.cube_position = {'u':['u', 'u', 'u', 'u', 'u', 'u', 'u', 'u', 'u'],
                               'r':['r', 'r', 'r', 'r', 'r', 'r', 'r', 'r', 'r'], 
                               'f':['f', 'f', 'f', 'f', 'f', 'f', 'f', 'f', 'f'],
@@ -78,7 +78,7 @@ class VirtualRubiksCubeHelper:
                               'b':['b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b']}
 
     #takes an input in cube notation and executes them on the virtual cube
-    def execute_algorithm(self, algorithm):
+    def Execute_Algorithm(self, algorithm):
         move_list = len(algorithm)
         iteration = 0
 
@@ -90,20 +90,20 @@ class VirtualRubiksCubeHelper:
             else:
                 if (iteration + 1 < move_list):
                     if (algorithm[iteration + 1] == "'"):
-                        self.turn_side(algorithm[iteration].lower(), False)
+                        self.Turn_Side(algorithm[iteration].lower(), False)
                         iteration += 3
                     elif (algorithm[iteration + 1] == "2"):
-                        self.turn_side(algorithm[iteration].lower(), False)
-                        self.turn_side(algorithm[iteration].lower(), False)
+                        self.Turn_Side(algorithm[iteration].lower(), False)
+                        self.Turn_Side(algorithm[iteration].lower(), False)
                         iteration += 3
                     else:
-                        self.turn_side(algorithm[iteration].lower(), True)
+                        self.Turn_Side(algorithm[iteration].lower(), True)
                         iteration += 2
                 else:
-                    self.turn_side(algorithm[iteration].lower(), True)
+                    self.Turn_Side(algorithm[iteration].lower(), True)
                     break
 
-    def convert_algorithm(self, algorithm):
+    def Convert_Algorithm(self, algorithm):
         move_list = len(algorithm)
         iteration = 0
         converted_moves = []
@@ -131,7 +131,7 @@ class VirtualRubiksCubeHelper:
 
         return converted_moves
 
-    def turn_side(self, face, direction_clockwise):
+    def Turn_Side(self, face, direction_clockwise):
         if(len(self.cube_position[face]) != 9):
             raise Exception('Array length was not 9')
 
@@ -144,7 +144,7 @@ class VirtualRubiksCubeHelper:
             ordered_cube_face[i] = unordered_cube_face[ordered_cube_face[i]-1]
 
         #rotate the face the given direction 1 time
-        ordered_cube_face = self.rotate_array(ordered_cube_face, 2, direction_clockwise)
+        ordered_cube_face = self.Rotate_Array(ordered_cube_face, 2, direction_clockwise)
 
         #order face back into row order to place back in dictionary
         reordered_cube_face = [1,2,3,8,4,7,6,5]
@@ -163,7 +163,7 @@ class VirtualRubiksCubeHelper:
             unordered_cube_side.append(self.cube_position[current_side][current_side_sticker_number - 1])
 
         #rotates the array of adjacent parts
-        ordered_cube_side = self.rotate_array(unordered_cube_side, 3, direction_clockwise)
+        ordered_cube_side = self.Rotate_Array(unordered_cube_side, 3, direction_clockwise)
 
         #places the rotated array back into the cube
         for sticker_number in range(0, len(self.edges_of_moving_face[face])):
@@ -174,7 +174,7 @@ class VirtualRubiksCubeHelper:
 
 
     #this method is used to rotate a face or the sides around a face when a cube turn is made
-    def rotate_array(self, array, times, direction_clockwise):
+    def Rotate_Array(self, array, times, direction_clockwise):
 
         #rotates an array of cube parts in the direction passed into the function
         if (direction_clockwise == 'ccw'):
@@ -189,12 +189,12 @@ class VirtualRubiksCubeHelper:
         return array
 
     #places the cube in the required state for the used algorithm(kociemba) and returns the solution
-    def get_solution(self):
-        solution = kociemba.solve(self.get_cube_position_for_kociemba())
+    def Get_Solution(self):
+        solution = kociemba.solve(self.Get_Cube_Position_For_Kociemba())
         return solution
 
-    def get_cube_position_for_kociemba(self):
-        oriented_cube =self.get_orientated_cube()
+    def Get_Cube_Position_For_Kociemba(self):
+        oriented_cube =self.Get_Orientated_Cube()
 
         cube_position_for_kociemba = ''
         for side in self.side_order:
@@ -204,9 +204,9 @@ class VirtualRubiksCubeHelper:
 
         return cube_position_for_kociemba.upper()
 
-    def get_orientated_cube(self):
+    def Get_Orientated_Cube(self):
 
-        orientation_map = self.get_orientation_map()
+        orientation_map = self.Get_Orientation_Map()
 
         orientated_cube = self.cube_position
         for side in self.side_order:
@@ -225,7 +225,7 @@ class VirtualRubiksCubeHelper:
         
         return orientated_cube
     
-    def get_orientation_map(self):
+    def Get_Orientation_Map(self):
         orientation_map = {}
         for side in self.cube_position:
             orientation_map[self.cube_position[side][4]] = side
@@ -233,7 +233,7 @@ class VirtualRubiksCubeHelper:
         return orientation_map
 
     #takes the current cube state and prints it to the console
-    def print_cube(self):
+    def Print_Cube(self):
         #creates an array of spaces that has equal rows to the faces
         leading_spaces = '              '
         spaces_array = []
@@ -241,7 +241,7 @@ class VirtualRubiksCubeHelper:
             spaces_array.insert(i, leading_spaces)
 
         #create individual lines for each cube face
-        cube = self.format_cube()
+        cube = self.Format_Cube()
 
         #create cube faces
         divider = '|============|'
@@ -257,9 +257,9 @@ class VirtualRubiksCubeHelper:
             iteration += iteration
 
         #combine each line portion
-        first_third = self.create_print_rows(spaces_array, formated_cube_faces[0], spaces_array, spaces_array)
-        second_third = self.create_print_rows(formated_cube_faces[2], formated_cube_faces[3], formated_cube_faces[1], formated_cube_faces[5])
-        third_third = self.create_print_rows(spaces_array, formated_cube_faces[4], spaces_array, spaces_array)
+        first_third = self.Create_Print_Rows(spaces_array, formated_cube_faces[0], spaces_array, spaces_array)
+        second_third = self.Create_Print_Rows(formated_cube_faces[2], formated_cube_faces[3], formated_cube_faces[1], formated_cube_faces[5])
+        third_third = self.Create_Print_Rows(spaces_array, formated_cube_faces[4], spaces_array, spaces_array)
         combined_array = first_third + second_third + third_third
 
         #print cube to console
@@ -269,7 +269,7 @@ class VirtualRubiksCubeHelper:
 
 
     #calls format_face for each side of cube
-    def format_cube(self):
+    def Format_Cube(self):
         sides = ['u', 'l', 'f', 'r', 'b', 'd']
         cube = {}
         for side in sides:
@@ -284,7 +284,7 @@ class VirtualRubiksCubeHelper:
         return row_1, row_2, row_3
 
 
-    def create_print_rows(self, array1, array2, array3, array4):
+    def Create_Print_Rows(self, array1, array2, array3, array4):
         #add columns together
         combined_array = numpy.stack((array1, array2, array3, array4), axis =- 1)
         less_lines = []
@@ -297,10 +297,10 @@ class VirtualRubiksCubeHelper:
             less_lines.append(line)
         return less_lines
 
-    def get_cube_state(self):
+    def Get_Cube_State(self):
         return self.cube_position
 
-    def get_scramble(self, moves = 20):
+    def Get_Scramble(self, moves = 20):
         possible_moves = ["R ", "R' ", "L ", "L' ", "U ", "U' ", "D ", "D' ", "F ", "F' ", "B ", "B' "]
         scramble = ""
         for i in range(0,moves):

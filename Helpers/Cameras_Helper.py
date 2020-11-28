@@ -2,14 +2,14 @@ import cv2
 import os
 import sys
 
-class CamerasHelper:
+class Cameras_Helper:
     def __init__(self):
         self.cameras = []
-        self.get_valid_camera()
+        self.Get_valid_Camera()
 
-    def get_valid_camera(self):
+    def Get_valid_Camera(self):
         for i in range(5):
-            cap = self.testDevice(i)
+            cap = self.Test_Device(i)
             if (cap):
                 print(i)
                 self.cameras.append(cap)
@@ -17,14 +17,14 @@ class CamerasHelper:
             if len(self.cameras) == 2:
                 break
 
-    def testDevice(self, source):
+    def Test_Device(self, source):
         cap = cv2.VideoCapture(source) 
         if cap is None or not cap.isOpened():
             return None
         
         return cap
 
-    def generate_frame(self, camera_number):
+    def Generate_Frame(self, camera_number):
         while True:
             success, frame = self.cameras[camera_number].read()
 
@@ -36,5 +36,5 @@ class CamerasHelper:
                 yield (b'--frame\r\n'
                     b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')  # concat frame one by one and show result
     
-    def switch_cameras(self):
+    def Switch_Cameras(self):
         self.cameras = self.cameras[::-1]
