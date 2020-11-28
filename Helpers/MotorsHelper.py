@@ -12,7 +12,7 @@ class Motors:
 
     direction_to_character_dictionary = {
         'c': 'c',
-        'ccw': 'g'
+        'ccw': 'd'
     }
 
     def __init__(self):
