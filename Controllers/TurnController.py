@@ -3,7 +3,7 @@ from flask import request
 import serial, sys, random
 sys.path.append(sys.path[0] + '/Helpers')
 from Motors import Motors
-
+from CubeController import cube
 
 turnController = Blueprint('turnController', __name__)
 
@@ -21,7 +21,7 @@ def Power():
 
 @turnController.route("/turn")
 def Turn_Side():
-    global motors
+    global motors, cube
     side = request.args.get('side')
     direction = request.args.get('direction')
 
@@ -33,6 +33,8 @@ def Turn_Side():
 
     motors.Send_Action_String()
 
+    turn_clock_wise = direction == 'c'
+    cube.turn_side(side, turn_clock_wise)
     return 'done'
 
 @turnController.route("/scramble")
