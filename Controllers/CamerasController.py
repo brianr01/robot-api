@@ -3,11 +3,11 @@ from flask import Flask, render_template, Response, Blueprint, request
 import cv2
 import sys
 sys.path.append(sys.path[0] + '/Helpers')
-from Cameras import Cameras
+from CamerasHelper import CamerasHelper
 
 camerasController = Blueprint('camerasController', __name__)
 
-cameras = Cameras()
+cameras = CamerasHelper()
 
 @camerasController.route('/video_feed_1')
 def video_feed_1():

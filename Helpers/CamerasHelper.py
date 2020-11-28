@@ -2,7 +2,7 @@ import cv2
 import os
 import sys
 
-class Cameras:
+class CamerasHelper:
     def __init__(self):
         self.cameras = []
         self.get_valid_camera()
@@ -11,6 +11,7 @@ class Cameras:
         for i in range(5):
             cap = self.testDevice(i)
             if (cap):
+                print(i)
                 self.cameras.append(cap)
             
             if len(self.cameras) == 2:
