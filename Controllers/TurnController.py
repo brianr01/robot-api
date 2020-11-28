@@ -39,12 +39,15 @@ def Turn_Side():
 
 @turnController.route("/scramble")
 def Scramble():
-    global motors
+    global motors, cube
 
     motors.Append_Power_To_Action_String('True')
     for i in range(0,30):
         side = random.choice('rludfb')
         direction = random.choice(['c', 'ccw'])
+
+        turn_clock_wise = direction == 'c'
+        cube.turn_side(side, turn_clock_wise)
 
         motors.Append_Direction_To_Action_String(direction)
         motors.Append_Turn_To_Action_String(side)
