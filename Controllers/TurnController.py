@@ -2,88 +2,71 @@ from flask import Blueprint
 from flask import request
 import serial, sys, random
 sys.path.append(sys.path[0] + '/Helpers')
-from MotorsHelper import Motors
-from CubeController import cube
+from CubeHelper import CubeHelper
+
+cube = CubeHelper()
 
 turnController = Blueprint('turnController', __name__)
 
-motors = Motors()
-
 @turnController.route("/power")
 def Power():
-    global motors
+    global cube
     state = request.args.get('state')
 
-    motors.Append_Power_To_Action_String(state)
-    motors.Send_Action_String()
+    cube.Power(state)
+    cube.Execute()
 
     return state
 
 @turnController.route("/turn")
 def Turn_Side():
-    global motors, cube
+    global cube
     side = request.args.get('side')
     direction = request.args.get('direction')
 
-    motors.Append_Power_To_Action_String('True')        # Power on
-    motors.Append_Direction_To_Action_String(direction) # Direction
-    motors.Append_Turn_To_Action_String(side)           # Turn side
-    motors.Append_Direction_To_Action_String('c')       # Direction clock wise
-    motors.Append_Power_To_Action_String('False')       # Power off
+    cube.Power('True')        # Power on
+    cube.Turn(side, direction)
+    cube.Power('False')       # Power off
 
-    motors.Send_Action_String()
+    cube.Execute()
 
-    turn_clock_wise = direction == 'c'
-    cube.turn_side(side, turn_clock_wise)
     return 'done'
 
 @turnController.route("/scramble")
 def Scramble():
-    global motors, cube
+    global cube
 
-    motors.Append_Power_To_Action_String('True')
+    cube.Power('True')
     for i in range(0,30):
         side = random.choice('rludfb')
         direction = random.choice(['c', 'ccw'])
 
-        turn_clock_wise = direction == 'c'
-        print(turn_clock_wise)
-        cube.turn_side(side, turn_clock_wise)
+        cube.Turn(side, direction)
 
-        motors.Append_Direction_To_Action_String(direction)
-        motors.Append_Turn_To_Action_String(side)
+    cube.Power('False')
 
-    motors.Append_Direction_To_Action_String('c')
-    motors.Append_Power_To_Action_String('False')
-
-    motors.Send_Action_String()
+    cube.Execute()
 
     return 'done'
 
 @turnController.route("/solve")
 def Solve():
-    global motors, cube
+    global cube
 
-    solution = cube.get_solution()
+    solution = cube.virtual_cube.get_solution()
 
     solution = solution.split()
 
-    motors.Append_Power_To_Action_String('True') 
-
+    cube.Power("True")
     for move in solution:
         move += ' '
         side = move[0].lower()
         direction =  'c' if move[1] != "'" else 'ccw'
-        motors.Append_Direction_To_Action_String(direction)
-        motors.Append_Turn_To_Action_String(side)
-
-        turn_clock_wise = direction == 'c'
-        cube.turn_side(side, turn_clock_wise)
+        cube.Turn(side, direction)
         if move[1] == '2':
-            cube.turn_side(side, turn_clock_wise)
-            motors.Append_Turn_To_Action_String(side)
+            cube.Turn(side, direction)
     
-    motors.Append_Power_To_Action_String('False') 
-    motors.Send_Action_String()
+    cube.Power("False")
+    cube.Execute()
 
     return {'value': solution}

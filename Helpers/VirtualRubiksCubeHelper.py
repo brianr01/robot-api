@@ -26,7 +26,7 @@ import random
 '''
 
 
-class Virtual_Cube:
+class VirtualRubiksCubeHelper:
     side_order = 'urfdlb'
 
     edges_of_moving_face = {'u':['b3', 'b2', 'b1',
@@ -175,11 +175,9 @@ class Virtual_Cube:
 
     #this method is used to rotate a face or the sides around a face when a cube turn is made
     def rotate_array(self, array, times, direction_clockwise):
-        if (direction_clockwise != False and direction_clockwise != True):
-            raise Exception('direction" was not a boolean value')
 
         #rotates an array of cube parts in the direction passed into the function
-        if (direction_clockwise == False):
+        if (direction_clockwise == 'ccw'):
             for i in range(0,times):
                 array.append(array[0])
                 del array[0]
@@ -213,7 +211,17 @@ class Virtual_Cube:
         orientated_cube = self.cube_position
         for side in self.side_order:
             for i in range(0, len(orientated_cube[side])):
-                orientated_cube[side][i] = orientation_map[orientated_cube[side][i]]
+                pass
+                # try:
+                #     orientated_cube[side][i] = orientation_map[orientated_cube[side][i]]
+                
+                # except Exception as error:
+                #     print('=====')
+                #     print('error:')
+                #     print(error)
+                #     print(i)
+                #     print(side)
+                #     print(orientated_cube)
         
         return orientated_cube
     

@@ -1,5 +1,4 @@
 from flask import Flask
-import serial
 from Routes import Routes
 
 app = Flask(__name__)
