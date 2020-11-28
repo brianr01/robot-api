@@ -1,6 +1,4 @@
 from flask import Flask
-# from Turn import turn
-# from Cameras import cameras
 import serial
 from Routes import Routes
 
