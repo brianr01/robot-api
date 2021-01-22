@@ -43,3 +43,28 @@ source env/bin/activate
 python3 app.py
 ```
 
+## Calibrate
+
+### Sticker Boxes
+1. Actiate virtual environment.
+```bash
+source env/bin/activate
+```
+2.Launch Program.
+```bash
+python Launch_Calibrate_Sticker_Location.py
+```
+3.Controls (information)
+(Click) TO change current location.
+Q: Go to previous sticker.
+E: GO to next sticker.
+V: Load current save.
+C: Save current points.
+W: Move box up a few pixels.
+S: Move box down a few pixels.
+D: Move Box right a few pixels.
+A: Move Box left a few pixels.
+ESC: Hold for at most 10 seconds to stop program.
+4.Windows (information)
+Reference: Use this window to see where to place sticker box.
+Calibration: Use this window to calibrate the sticker box and use other controls.
