@@ -1,11 +1,11 @@
-import cv2, sys, math, time, pickle
+import cv2, sys, math, time, pickle, numpy
 
 class Calibrate_Sticker_Location_Program:
     def __init__(self):
         self.points = []
         for i in range (0, 54):
             self.points.append([150,150])
-        self.side_order = 'rludfb'
+        self.side_order = 'urfdlb'
         self.camera_sides = ['ubr', 'ldf']
         self.current_sticker = 0
         self.current_session_saved = False
@@ -73,53 +73,50 @@ class Calibrate_Sticker_Location_Program:
                 [97,189]
             ]}
 
-    def Launch(self, frame_0, frame_1):
-        self.frames = [frame_0, frame_1]
+    def Launch(self, frames):
+        self.frames = frames
         while True:
-            cv2.imshow('view', self.Get_Cube_Calibration_Segment(self.current_sticker))
-            cv2.imshow('frame', self.Get_Frame_With_Sticker_Box())
-            cv2.setMouseCallback('frame', self.Update)
+            cv2.imshow('reference', self.Get_Cube_Calibration_Segment(self.current_sticker))
+            cv2.imshow('calibration', self.Get_Frame_With_Sticker_Box())
+            cv2.setMouseCallback('calibration', self.Update)
             k = cv2.waitKey(33)
             if k==27:    # Esc key to stop
-                print('Escape')
-                print(self.times_escape_hit)
                 if self.current_session_saved or self.times_escape_hit == 100:
+                    self.times_escape_hit = 0
                     break
                 
                 self.times_escape_hit += 1
             elif k == 119:
-                print('w')
                 self.points[self.current_sticker][1] -= 1
             elif k == 115:
-                print('s')
                 self.points[self.current_sticker][1] += 1
             elif k == 97:
-                print('a')
                 self.points[self.current_sticker][0] -= 1
             elif k == 100:
-                print('d')
                 self.points[self.current_sticker][0] += 1
             elif k == 113:
-                print('q')
                 self.current_sticker -= 1
                 self.current_sticker %=  54
                 print(self.Convert_Decimal_To_Sticker_Address(self.current_sticker))
             elif k == 101:
-                print('e')
                 self.current_sticker += 1
                 self.current_sticker %= 54
                 print(self.Convert_Decimal_To_Sticker_Address(self.current_sticker))
             elif k == 99:
-                print('c')
+                print('saved')
                 self.Save_Points()
             elif k == 118:
-                print('v')
+                print('loaded')
                 self.Load_Points()
             elif k==-1:  # normally -1 returned,so don't print it
                 continue
             else:
                 print(k) # else print its value
         cv2.destroyAllWindows()
+    
+    def Update(self, event, y, x, flag, flag2):
+        if event == 4:
+            self.points[self.current_sticker] = [y, x]
 
     def Save_Points(self):
         self.Create_Backup_Of_Previous_Save()
@@ -135,23 +132,19 @@ class Calibrate_Sticker_Location_Program:
 
     def Load_Points(self):
         self.points = pickle.load(open( "Saves/Points_Saves.p", "rb" ))        
-    
-    def Update(self, event, y, x, flag, flag2):
-        if event == 4:
-            self.points[self.current_sticker] = [y, x]
-            print(self.points)
 
     def Get_Frame_With_Sticker_Box(self):
         frame = self.Get_Correct_Frame().copy()
 
         box_point = self.points[self.current_sticker]
 
-        return cv2.rectangle(
+        frame_with_box = cv2.rectangle(
             frame,
             (box_point[0] - 25, box_point[1] - 25), (box_point[0] + 25, box_point[1] + 25),
             (0, 0, 0),
             3
         )
+        return frame_with_box
 
     def Get_Correct_Frame(self):
         if self.Get_Current_Side_Letter() in self.camera_sides[0]:
