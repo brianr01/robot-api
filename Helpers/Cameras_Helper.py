@@ -1,15 +1,22 @@
 import cv2, os, sys, math, pickle
+import numpy as np
+CATEGORIES = ['white','yellow','orange','red','green','blue']
+
+import tensorflow as tf
+model = tf.keras.models.load_model("cube_ai_model_9996")
 
 class Cameras_Helper:
     def __init__(self):
         self.cameras = []
-        self.Get_valid_Camera()
+        self.Get_valid_Cameras()
+        if len(self.cameras) < 2:
+            raise Exception("There are not enough cameras to run. Only " + str(len(self.cameras)) + " cameras detected.")
 
-    def Get_valid_Camera(self):
+    def Get_valid_Cameras(self):
         for i in range(5):
             cap = self.Test_Device(i)
             if (cap):
-                print(i)
+                print("Found camera. It is on device video " + str(i) + ".")
                 self.cameras.append(cap)
             
             if len(self.cameras) == 2:
@@ -26,6 +33,13 @@ class Cameras_Helper:
         success, frame = self.cameras[camera_number].read()
 
         return frame
+    
+    def Get_Frames(self):
+        frames = []
+        for camera_number in range(0, len(self.cameras)):
+            frames.append(self.Get_Frame(camera_number))
+
+        return frames
 
     def Generate_Frame(self, camera_number):
         while True:
@@ -44,44 +58,49 @@ class Cameras_Helper:
 
     def Get_Sticker_Images(self):
         sticker_images = []
-        frames = [self.Get_Frame(0), self.Get_Frame(1)]
+        frames = self.Get_Frames()
         
         point_saves = pickle.load(open( "Saves/Points_Saves.p", "rb"))
 
-        for i in range(len(point_saves)):
-            point = point_saves[i]
-            print(self.Get_Camera_Number(i))
-            copy_frame = frames[self.Get_Camera_Number(i)].copy()
-            print([point[0] - 25, point[1] - 25, 
-                    point[0] + 25, point[1] + 25])
+        for i, point in enumerate(point_saves):
+            frame = frames[self.Get_Camera_Number(i)]
             sticker_images.append(
-                copy_frame[ 
-                    point[1] - 25: point[1] + 25,
-                    point[0] - 25: point[0] + 25
-                ]
+                self.Get_Sticker_Image(point, frame)
             )
-
-        # number = 0
         
-        # print(len(sticker_images))
-        # while True:
-        #     if number == 54:
-        #         break
-        #     cv2.imshow('frame0', frames[0])
-        #     cv2.imshow('frame1', frames[1])
-        #     cv2.imshow('frame', sticker_images[number])
-        #     k = cv2.waitKey(33)
-        #     if k==27:
-        #         break
-        #     elif k!=-1:
-        #         number += 1
-        #         print(number)
-
-        # cv2.destroyAllWindows()
         return sticker_images
     
+    def Get_Sticker_Image(self, point, frame):
+        copy_frame = frame.copy()
+        return copy_frame[ 
+            point[1] - 25: point[1] + 25,
+            point[0] - 25: point[0] + 25
+        ]
+        
+
+    def Get_Predicted_Cube_Colors(self):
+        sticker_images = self.Get_Sticker_Images()
+        colors = []
+        for image in sticker_images:
+            colors.append(self.Predict_Cube_Color(image))
+    
+        return colors
+
+    def Predict_Cube_Color(self, image):
+        formatted_image = self.Format_Image_For_Color_Prediction(image)
+
+        
+        # Predict
+        predictions = model.predict([formatted_image])[0].tolist()
+        prediction = CATEGORIES[predictions.index(max(predictions))]
+
+        return prediction
+
+    def Format_Image_For_Color_Prediction(self, image):
+        return np.array((image / 255.0)).reshape(-1, 50, 50, 3)
+
     def Get_Camera_Number(self, sticker_number):
-        side_order = 'rludfb'
+        side_order = 'urfdlb'
         camera_sides = ['ubr', 'ldf']
         return 1 if side_order[math.floor(sticker_number / 9)] in camera_sides[0] else 0
             
