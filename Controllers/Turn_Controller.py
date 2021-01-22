@@ -2,71 +2,52 @@ from flask import Blueprint
 from flask import request
 import serial, sys, random
 sys.path.append(sys.path[0] + '/Helpers')
-from Cube_Helper import Cube_Helper
+from Robot_Helper import robot
 
-cube = Cube_Helper()
 
 turn_controller = Blueprint('turn_controller', __name__)
 
+
 @turn_controller.route("/power")
 def Power():
-    global cube
+    global robot
     state = request.args.get('state')
 
-    cube.Power(state)
-    cube.Execute()
+    robot.cube.Power(state)
+    robot.cube.Execute()
 
     return state
 
 @turn_controller.route("/turn")
 def Turn_Side():
-    global cube
+    global robot
     side = request.args.get('side')
     direction = request.args.get('direction')
 
-    cube.Power('on')        # Power on
-    cube.Turn(side, direction)
-    cube.Power('off')       # Power off
+    robot.cube.Power('on')
+    robot.cube.Turn(side, direction)
+    robot.cube.Power('off')
 
-    cube.Execute()
+    robot.cube.Execute()
 
     return 'done'
 
 @turn_controller.route("/scramble")
 def Scramble():
-    global cube
+    global robot
 
-    cube.Power('on')
-    for i in range(0,30):
-        side = random.choice('rludfb')
-        direction = random.choice(['c', 'ccw'])
+    robot.cube.Power('on')
+    robot.cube.Do_Random_Moves_While_Tracking_Cube(30)
 
-        cube.Turn(side, direction)
-
-    cube.Power('off')
-
-    cube.Execute()
+    robot.cube.Power('off')
+    robot.cube.Execute()
 
     return 'done'
 
 @turn_controller.route("/solve")
 def Solve():
-    global cube
+    global robot
 
-    solution = cube.virtual_cube.Get_Solution()
+    robot.Solve()
 
-    solution = solution.split()
-
-    cube.Power("True")
-    for move in solution:
-        move += ' '
-        side = move[0].lower()
-        direction =  'c' if move[1] != "'" else 'ccw'
-        cube.Turn(side, direction)
-        if move[1] == '2':
-            cube.Turn(side, direction)
-    
-    cube.Power("False")
-    cube.Execute()
-
-    return {'value': solution}
+    return 'solving'
