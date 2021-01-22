@@ -1,4 +1,4 @@
-import serial
+import serial, time
 
 class Motors_Helper:
     side_letter_to_character_dictionary = {
@@ -16,6 +16,7 @@ class Motors_Helper:
     }
 
     def __init__(self):
+        print('init motors')
         self.arduino = serial.Serial('/dev/ttyACM0', 9600)
         self.actionString = ''
 
@@ -36,6 +37,7 @@ class Motors_Helper:
         self.Append_End_To_Action_String()
 
         for character in self.actionString:
+            time.sleep(.004)
             self.arduino.write(character.encode('UTF-8'))
         
         self.actionString = ''
