@@ -28,7 +28,14 @@ import random
 
 class Virtual_Rubiks_Cube_Helper:
     side_order = 'urfdlb'
-
+    colors_to_sides = {
+        'white': 'u',
+        'yellow': 'd',
+        'blue': 'b',
+        'green': 'f',
+        'red': 'r',
+        'orange': 'l'
+    }
     edges_of_moving_face = {'u':['b3', 'b2', 'b1',
                                    'r3', 'r2', 'r1',
                                    'f3', 'f2', 'f1',
@@ -152,7 +159,7 @@ class Virtual_Rubiks_Cube_Helper:
             reordered_cube_face[i] = ordered_cube_face[reordered_cube_face[i]-1]
 
         #insert the middle side and place back in dictionary
-        reordered_cube_face.insert(4,face + '5')
+        reordered_cube_face.insert(4,face)
         self.cube_position[face] = reordered_cube_face
 
         #adds all sides adjacent to the rotated face to an array to rotate
@@ -203,6 +210,13 @@ class Virtual_Rubiks_Cube_Helper:
                 cube_position_for_kociemba += sticker[0]
 
         return cube_position_for_kociemba.upper()
+    
+    def Get_Cube_Position_For_Training_Images(self):
+        cube_position = []
+        for side in self.side_order:
+            cube_position += self.cube_position[side]
+        self.Print_Cube()
+        return cube_position
 
     def Get_Orientated_Cube(self):
 
@@ -212,16 +226,6 @@ class Virtual_Rubiks_Cube_Helper:
         for side in self.side_order:
             for i in range(0, len(orientated_cube[side])):
                 pass
-                # try:
-                #     orientated_cube[side][i] = orientation_map[orientated_cube[side][i]]
-                
-                # except Exception as error:
-                #     print('=====')
-                #     print('error:')
-                #     print(error)
-                #     print(i)
-                #     print(side)
-                #     print(orientated_cube)
         
         return orientated_cube
     
@@ -257,9 +261,9 @@ class Virtual_Rubiks_Cube_Helper:
             iteration += iteration
 
         #combine each line portion
-        first_third = self.Create_Print_Rows(spaces_array, formated_cube_faces[0], spaces_array, spaces_array)
-        second_third = self.Create_Print_Rows(formated_cube_faces[2], formated_cube_faces[3], formated_cube_faces[1], formated_cube_faces[5])
-        third_third = self.Create_Print_Rows(spaces_array, formated_cube_faces[4], spaces_array, spaces_array)
+        first_third = self.Create_Print_Rows(spaces_array, formated_cube_faces[5], spaces_array, spaces_array)
+        second_third = self.Create_Print_Rows(formated_cube_faces[1], formated_cube_faces[3], formated_cube_faces[4], formated_cube_faces[0])
+        third_third = self.Create_Print_Rows(spaces_array, formated_cube_faces[2], spaces_array, spaces_array)
         combined_array = first_third + second_third + third_third
 
         #print cube to console
@@ -270,17 +274,16 @@ class Virtual_Rubiks_Cube_Helper:
 
     #calls format_face for each side of cube
     def Format_Cube(self):
-        sides = ['u', 'l', 'f', 'r', 'b', 'd']
         cube = {}
-        for side in sides:
+        for side in self.side_order:
             cube[side] = self.format_face(side)
         return cube
 
     #for a given face, formats the current state into readable strings
     def format_face(self,face):
-        row_1 = '|-{}--{}--{}-|'.format(self.cube_position[face][0], self.cube_position[face][1], self.cube_position[face][2])
-        row_2 = '|-{}--{}--{}-|'.format(self.cube_position[face][3], self.cube_position[face][4], self.cube_position[face][5])
-        row_3 = '|-{}--{}--{}-|'.format(self.cube_position[face][6], self.cube_position[face][7], self.cube_position[face][8])
+        row_1 = '|.--{}--{}--{}-.|'.format(self.cube_position[face][0], self.cube_position[face][1], self.cube_position[face][2])
+        row_2 = '|.--{}--{}--{}-.|'.format(self.cube_position[face][3], self.cube_position[face][4], self.cube_position[face][5])
+        row_3 = '|.--{}--{}--{}-.|'.format(self.cube_position[face][6], self.cube_position[face][7], self.cube_position[face][8])
         return row_1, row_2, row_3
 
 
@@ -307,3 +310,39 @@ class Virtual_Rubiks_Cube_Helper:
             scramble = scramble + possible_moves[random.randint(0,11)]
 
         return scramble
+
+    def Set_Prediected_Cube_Position(self, predicted_cube_position):
+        position = []
+
+        for color in predicted_cube_position:
+            position.append(self.Convert_Color_To_Side(color))
+        
+        for side_number in range(0, 6):
+            side = self.side_order[side_number]
+
+            self.cube_position[side] = position[side_number * 9: (side_number + 1) * 9]
+            
+
+    def Convert_Color_To_Side(self, color):
+        return self.colors_to_sides[color]
+
+
+    def Orientate_Cube_For_Kociemba(self):
+        center_to_side_mapping = self.Get_Center_To_Side_Mapping()
+
+        orientated_cube = {}
+        for side in self.cube_position:
+            orientated_cube[side] = []
+            for sticker in self.cube_position[side]:
+                side_color = center_to_side_mapping[sticker]
+
+                orientated_cube[side].append(side_color)
+    
+        self.cube_position = orientated_cube
+
+    def Get_Center_To_Side_Mapping(self):
+        center_to_side_mapping = {}
+        for side in self.cube_position:
+            center_to_side_mapping[self.cube_position[side][4]] = side
+        
+        return center_to_side_mapping
