@@ -21,7 +21,9 @@ conda env create --file environment.yml
 conda activate robot-env
 ```
 ## Startup
-
+### Option 1 Makefile
+1. Run `make up`
+### Option 2 Manually
 1. Change the permissions on the connected arduino.
 ```bash
 sudo chmod 777 /dev/ttyACM0
