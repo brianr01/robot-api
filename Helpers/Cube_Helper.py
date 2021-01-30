@@ -13,9 +13,7 @@ class Cube_Helper:
     
     def Turn(self, side, direction):
         self.virtual_cube.Turn_Side(side, direction)
-
-        self.motors.Append_Direction_To_Action_String(direction)
-        self.motors.Append_Turn_To_Action_String(side)
+        self.motors.Append_Turn_To_Action_String(side, direction)
 
     def Power(self, state):
         self.motors.Append_Power_To_Action_String(state) 
