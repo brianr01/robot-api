@@ -7,7 +7,7 @@ A python api to control Rubik's cube solving robot using flask.
 * [Python 3](https://www.python.org/downloads/)
 * [Pip 3](https://www.educative.io/edpresso/installing-pip3-in-ubuntu)
 * [Virtual Env](https://packaging.python.org/guides/installing-using-pip-and-virtual-environments/)
-* [Conda](https://docs.conda.io/projects/conda/en/latest/)
+* [Conda](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html)
 
 ## Installation
 
